@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random(); // Add this line.
+    final wordPair = WordPair.random();
     return MaterialApp(
       title: 'Welcome to Flutter',
       home: RandomWords(),
@@ -99,7 +99,6 @@ class _RandomWordsState extends State<RandomWords> {
               semanticLabel: alreadySaved ? 'Remove from saved' : 'Save',
             ),
             onTap: () {
-              // NEW from here ...
               setState(() {
                 if (alreadySaved) {
                   _saved.remove(_suggestions[index]);
