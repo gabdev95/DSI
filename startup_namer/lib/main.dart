@@ -71,6 +71,7 @@ class _RandomWordsState extends State<RandomWords> {
           title: const Text('Sugestões de nome'),
           actions: [
             IconButton(
+              icon: const Icon(Icons.grid_view),
               onPressed: (() {
                 setState(() {
                   if (cardMode == false) {
@@ -82,7 +83,6 @@ class _RandomWordsState extends State<RandomWords> {
               }),
               tooltip:
                   cardMode ? 'List Vizualization' : 'Card Mode Vizualization',
-              icon: const Icon(Icons.grid_view),
             ),
             IconButton(
               icon: const Icon(Icons.bookmark_border),
@@ -115,23 +115,55 @@ class _RandomWordsState extends State<RandomWords> {
 
   Widget _buildRow(WordPair pair, int index) {
     final alreadySaved = _saved.contains(_suggestions[index]);
-    return ListTile(
+    var color = Colors.transparent;
+    final item = pair.asPascalCase;
+    return Dismissible(
+      key: Key(item),
+      direction: DismissDirection.endToStart,
+      onDismissed: (direction) {
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(_suggestions[index]);
+          }
+          _suggestions.removeAt(index);
+        });
+      },
+      background: Container(
+        alignment: Alignment.centerRight,
+        child: const Text(
+          "Deletar",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+      child: ListTile(
         title: Text(
-          pair.asPascalCase,
+          _suggestions[index].asPascalCase,
           style: _biggerFont,
         ),
-        trailing: Icon(alreadySaved ? Icons.favorite : Icons.favorite_border,
-            color: alreadySaved ? const Color.fromARGB(223, 255, 7, 7) : null,
-            semanticLabel: alreadySaved ? 'Remove from saved' : 'Save'),
         onTap: () {
-          setState(() {
-            if (alreadySaved) {
-              _saved.remove(_suggestions[index]);
-            } else {
-              _saved.add(_suggestions[index]);
-            }
-          });
-        });
+          _suggestions.removeAt(index);
+        },
+        trailing: IconButton(
+            icon: Icon(alreadySaved ? Icons.favorite : Icons.favorite_border,
+                color:
+                    alreadySaved ? const Color.fromARGB(255, 255, 0, 0) : null,
+                semanticLabel: alreadySaved ? 'Remove from saved' : 'Save'),
+            tooltip: "Favorite",
+            hoverColor: color,
+            onPressed: () {
+              setState(() {
+                if (alreadySaved) {
+                  _saved.remove(_suggestions[index]);
+                } else {
+                  _saved.add(_suggestions[index]);
+                }
+              });
+            }),
+      ),
+    );
   }
 
   //Building cards vizualization
