@@ -17,11 +17,14 @@ class _EditPageState extends State<EditPage> {
     final arguments =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Repository state = arguments['suggestions'];
-    final int index = arguments['index'];
+    final int? index = arguments['index'];
+    final String? type = arguments['type'];
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('Edit the word "${state.index(index).asPascalCase}"'),
+          title: type == null
+              ? Text('Edite a palavra "${state.index(index!).asPascalCase}"')
+              : const Text('Adicionar palavra'),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
@@ -34,31 +37,39 @@ class _EditPageState extends State<EditPage> {
                   child: TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'You need to type some name';
+                        return 'Você precisa digitar alguma palavra';
                       }
                       return null;
                     },
                     onChanged: (value) => setState(() {
                       newWord = value;
                     }),
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter the new Word',
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                    decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: type == null
+                            ? 'Escreva aqui para adicionar'
+                            : 'Escreva aqui para trocar',
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8)),
                   ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       setState(() {
-                        state.changeWordByIndex(newWord, index);
+                        if (type == null) {
+                          state.changeWordByIndex(newWord, index!);
+                        } else {
+                          state.addWord(newWord);
+                        }
                       });
                       Navigator.pop(context);
                     }
                   },
-                  child: Text(
-                      'Edit ${state.index(index).asPascalCase} to $newWord'),
+                  child: type == null
+                      ? Text(
+                          'Edite ${state.index(index!).asPascalCase} para $newWord')
+                      : Text('Adicionar $newWord'),
                 )
               ],
             ),

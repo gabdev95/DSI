@@ -13,10 +13,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random(); // Add this line.
     return MaterialApp(
-      title: 'Primeiro contato com Flutter',
-      home: RandomWords(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const RandomWords(),
+        '/edit': (context) => const EditPage(),
+      },
     );
   }
 }
@@ -95,12 +97,28 @@ class _RandomWordsState extends State<RandomWords> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/edit', arguments: {
+                        'type': 'add',
+                        'suggestions': _suggestions
+                      }).then((_) => setState((() {})));
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      size: 34,
+                    ))
+              ],
+            ),
             const SizedBox(height: 10),
             Expanded(
               child: cardMode
                   ? GridView.builder(
                       padding: const EdgeInsets.all(16),
-                      itemCount: 20,
+                      itemCount: _suggestions.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
@@ -171,7 +189,7 @@ class _RandomWordsState extends State<RandomWords> {
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.all(16.0),
-                      itemCount: 40,
+                      itemCount: _suggestions.length * 2,
                       itemBuilder: (context, i) {
                         if (i.isOdd) return const Divider();
 
