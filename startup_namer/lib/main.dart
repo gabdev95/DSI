@@ -13,10 +13,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random(); // Add this line.
     return MaterialApp(
-      title: 'Primeiro contato com Flutter',
-      home: RandomWords(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const RandomWords(),
+        '/edit': (context) => const EditPage(),
+      },
     );
   }
 }
